@@ -3,7 +3,7 @@
 
   // Paste your Apps Script Web App URL here after deploying it (see SETUP.md, Part 4).
   var CONFIG = {
-    API_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+    API_URL: "https://script.google.com/macros/s/AKfycbxQaLGgyAEbUuWPVaZs-gMCqwIdECbCRr2KbNaQX70oHWRqfpynQtdiOslEv8y9Zxo-/exec",
   };
 
   var els = {
