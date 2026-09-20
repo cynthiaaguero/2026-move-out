@@ -1,0 +1,6 @@
+id,name,link,price,category,image_url,note,claimed,claimed_by,claim_code
+item-2,Stand Mixer,https://example.com/stand-mixer,279.99,Kitchen,https://images.example.com/stand-mixer.jpg,Any color is great!,FALSE,,
+item-3,Bath Towel Set,https://example.com/bath-towels,45,Bathroom,,Neutral colors preferred,FALSE,,
+item-4,Cast Iron Skillet,https://example.com/cast-iron-skillet,65.5,Kitchen,https://images.example.com/cast-iron-skillet.jpg,,FALSE,,
+item-5,Cozy Throw Blanket,https://example.com/throw-blanket,38,Living Room,https://images.example.com/throw-blanket.jpg,Cozy and warm please!,TRUE,,H8K3MQ
+item-6,Starter Tool Kit,https://example.com/tool-kit,89.99,Tools,,For all those first-apartment fixes,FALSE,,

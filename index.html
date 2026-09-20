@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cynthia's New Home Registry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Cynthia's New Home Registry 🏡</h1>
+    <!-- Edit the welcome message and move-in date below anytime — this section is plain text, not connected to the spreadsheet. -->
+    <p class="header-message">
+      We just signed the lease and we're so excited to start settling into our new place! If you'd
+      like to help us make it feel like home, we've put together a little wishlist below.
+      Thank you for being part of this new chapter with us 💛
+    </p>
+    <p class="header-date">Moving in: <strong>October 2026</strong></p>
+  </header>
+
+  <main>
+    <div class="controls-bar">
+      <div class="filter-group">
+        <label for="category-filter">Category</label>
+        <select id="category-filter">
+          <option value="all">All categories</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-select">Sort by price</label>
+        <select id="sort-select">
+          <option value="default">Featured order</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+      <p id="item-count" class="item-count" aria-live="polite"></p>
+    </div>
+
+    <section aria-labelledby="registry-heading">
+      <h2 id="registry-heading" class="visually-hidden">Registry items</h2>
+
+      <div id="loading-state" class="loading-state">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+      <p id="empty-state" class="empty-state" hidden></p>
+
+      <div id="registry-grid" class="grid" hidden></div>
+    </section>
+
+    <section aria-labelledby="claimed-heading" id="claimed-section" class="claimed-section" hidden>
+      <h2 id="claimed-heading">Already Claimed</h2>
+      <div id="claimed-grid" class="grid claimed-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with love for our new home. Thank you for being here! 🏡</p>
+  </footer>
+
+  <div id="toast" class="toast" role="alert" hidden></div>
+
+  <dialog id="confirm-dialog" class="app-dialog" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Mark as bought?</h2>
+    <p id="confirm-text"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirm-ok">Yes, I bought this</button>
+    </div>
+  </dialog>
+
+  <dialog id="code-dialog" class="app-dialog" aria-labelledby="code-title">
+    <h2 id="code-title">You're all set! 🎉</h2>
+    <p>Thank you so much! Please save this claim code somewhere safe — you'll need it if you ever want to undo this.</p>
+    <p class="claim-code" id="claim-code-display"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="copy-code-btn">Copy code</button>
+      <button type="button" class="btn btn-primary" id="code-dialog-close">Done</button>
+    </div>
+  </dialog>
+
+  <dialog id="undo-dialog" class="app-dialog" aria-labelledby="undo-title">
+    <h2 id="undo-title">Undo a claim</h2>
+    <p id="undo-item-name"></p>
+    <label for="undo-code-input">Enter your claim code</label>
+    <input type="text" id="undo-code-input" autocomplete="off" />
+    <p id="undo-error" class="dialog-error" hidden></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="undo-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="undo-submit">Undo claim</button>
+    </div>
+  </dialog>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>
