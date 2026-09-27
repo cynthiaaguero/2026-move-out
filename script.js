@@ -6,6 +6,11 @@
     API_URL: "https://script.google.com/macros/s/AKfycbxQaLGgyAEbUuWPVaZs-gMCqwIdECbCRr2KbNaQX70oHWRqfpynQtdiOslEv8y9Zxo-/exec",
   };
 
+  // Apps Script web apps redirect on every request and can cold-start, so a
+  // fresh load can take several seconds. We cache the last good response and
+  // render it immediately, then quietly refetch in the background.
+  var CACHE_KEY = "registry-items-cache-v1";
+
   var els = {
     loading: document.getElementById("loading-state"),
     empty: document.getElementById("empty-state"),
@@ -73,11 +78,20 @@
   }
 
   function loadItems() {
-    showLoading();
+    var cached = loadCachedItems();
+    if (cached) {
+      state.items = cached;
+      populateCategoryOptions();
+      render();
+    } else {
+      showLoading();
+    }
+
     if (!CONFIG.API_URL || CONFIG.API_URL.indexOf("PASTE_YOUR") === 0) {
-      showLoadError({ message: "missing_config" });
+      if (!cached) showLoadError({ message: "missing_config" });
       return;
     }
+
     fetch(CONFIG.API_URL, { method: "GET" })
       .then(function (res) {
         if (!res.ok) throw new Error("http_error");
@@ -86,12 +100,36 @@
       .then(function (data) {
         if (!data.ok) throw new Error(data.error || "server_error");
         state.items = data.items || [];
+        saveCachedItems(state.items);
         populateCategoryOptions();
         render();
       })
       .catch(function (err) {
-        showLoadError(err);
+        if (cached) {
+          showToast("Showing saved data — couldn't refresh just now.", "error");
+        } else {
+          showLoadError(err);
+        }
       });
+  }
+
+  function loadCachedItems() {
+    try {
+      var raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && Array.isArray(parsed.items) ? parsed.items : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveCachedItems(items) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ items: items }));
+    } catch (err) {
+      // Best-effort cache — ignore quota errors or disabled storage (e.g. private browsing).
+    }
   }
 
   function showLoading() {
@@ -266,8 +304,10 @@
       body.appendChild(note);
     }
 
+    // Price and link are hidden once an item is claimed — the only action
+    // left on a claimed card is undoing the claim.
     var price = numericPrice(item);
-    if (price !== null) {
+    if (price !== null && !claimed) {
       var priceEl = document.createElement("p");
       priceEl.className = "card-price";
       priceEl.textContent = priceFormatter.format(price);
@@ -277,7 +317,7 @@
     var actions = document.createElement("div");
     actions.className = "card-actions";
 
-    if (item.link) {
+    if (item.link && !claimed) {
       var link = document.createElement("a");
       link.href = item.link;
       link.target = "_blank";
@@ -343,6 +383,7 @@
         els.confirmDialog.close();
         var item = findItem(id);
         if (item) item.claimed = true;
+        saveCachedItems(state.items);
         els.claimCodeDisplay.textContent = data.claim_code;
         els.codeDialog.showModal();
         render();
@@ -408,6 +449,7 @@
         }
         var item = findItem(id);
         if (item) item.claimed = false;
+        saveCachedItems(state.items);
         closeUndoDialog();
         showToast("Claim undone. The item is back on the registry.", "success");
         render();
